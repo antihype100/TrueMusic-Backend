@@ -1,6 +1,6 @@
-require('dotenv').config();
-const express = require('express');
-const trueMusicDb = require('./databases/dbConnect');
+import 'dotenv/config'
+import express from 'express';
+import trueMusicDb from './databases/dbConnect.js';
 
 const PORT = process.env.PORT || 5000;
 

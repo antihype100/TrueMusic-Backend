@@ -2,8 +2,8 @@
   "name": "truemusic-backend",
   "version": "1.0.0",
   "description": "",
-  "type": "commonjs",
   "main": "src/index.ts",
+  "type": "module",
   "scripts": {
     "dev": "npx nodemon",
     "start": "npm run build && node dist/index.js",
@@ -23,6 +23,7 @@
     "sequelize": "^6.28.0"
   },
   "devDependencies": {
+    "@types/express": "^4.17.15",
     "@types/node": "^18.11.18",
     "@typescript-eslint/eslint-plugin": "^5.48.2",
     "@typescript-eslint/parser": "^5.48.2",
