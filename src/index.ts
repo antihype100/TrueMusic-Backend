@@ -1,6 +1,8 @@
 import 'dotenv/config'
 import express from 'express';
+import cors from 'cors';
 import {Sequelize} from "sequelize-typescript";
+
 import {
     Album,
     Track,
@@ -11,6 +13,7 @@ import {
     UserLikedTrack, UserPlaylist,
     UserSubscriptions
 } from "./models/models.js";
+import {router} from "./routes/index.js";
 
 // @ts-ignore
 export const trueMusicDb =  new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
@@ -34,6 +37,12 @@ export const trueMusicDb =  new Sequelize(process.env.DB_NAME, process.env.DB_US
 
 const PORT = process.env.PORT || 5000;
 const app = express();
+
+app.use(express.json());
+app.use(cors({
+    credentials: true,
+}));
+app.use('/', router)
 
 const start = async () => {
     try {
