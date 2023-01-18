@@ -15,11 +15,12 @@ import {Optional} from "sequelize";
 // Интерфейсы
 
 export interface UserAttributes {
-    id: number,
-    role: string;
+    id: number
     userName: string;
     email: string;
     password: string;
+    token: string,
+    activateLink: string
 }
 interface UserCreationAttributes extends Optional<UserAttributes, 'id'> {}
 
@@ -64,10 +65,6 @@ export class User extends Model<UserAttributes, UserCreationAttributes> {
     @Column
     id: number;
 
-
-    @Column
-    role: string;
-
     @Unique
     @Column
     userName: string;
@@ -78,6 +75,13 @@ export class User extends Model<UserAttributes, UserCreationAttributes> {
 
     @Column
     password: string;
+
+    @Column
+    token: string;
+
+    @Column
+    activateLink: string;
+
 
     @BelongsToMany(() => Track, () => UserLikedTrack)
     likedTracks: Track[]
