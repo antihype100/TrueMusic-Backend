@@ -1,10 +1,10 @@
-import express from "express";
-import {AuthController} from "../controllers/authController.js";
+import express from 'express';
+import trackRouter from './trackRouter.js';
+import authRouter from './authRouter.js';
 
-const authController = new AuthController()
+const router = express.Router();
 
-const router = express.Router()
+router.use('/track', trackRouter);
+router.use('/user', authRouter)
 
-router.post('/register', authController.register)
-
-export {router}
+export default router;
