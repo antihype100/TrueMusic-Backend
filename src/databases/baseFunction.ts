@@ -1,5 +1,4 @@
 import { Album, Track, User } from '../models/models.js';
-
 import type { UserAttributes, AlbumAttributes, TrackAttributes } from '../models/models.js';
 
 export const createUser = async (user: UserAttributes) => {

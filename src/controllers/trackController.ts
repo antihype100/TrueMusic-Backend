@@ -1,6 +1,4 @@
-import * as uuid from 'uuid';
-import path from 'path';
-import { TrackAttributes } from '../models/models.js';
+import { Track, TrackAttributes } from '../models/models.js';
 import { NextFunction, Request, Response } from 'express';
 
 export interface TypedRequestBody<T> extends Request {
@@ -8,22 +6,17 @@ export interface TypedRequestBody<T> extends Request {
 }
 
 export class TrackController {
-
   async create(req: TypedRequestBody<TrackAttributes>, res: Response, next: NextFunction) {
     try {
-      const { id, descriptionTrack, trackName, trackPath, trackText, production } = req.body;
-      return res.send(req.body);
+      const track = await Track.create({ ...req.body });
 
+      return res.json(track);
     } catch (e) {
-      console.log(e);
+      next(e);
     }
-  };
-
-  async getAll() {
-
   }
 
-  async getOne() {
+  async getAll() {}
 
-  }
+  async getOne() {}
 }
