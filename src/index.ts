@@ -1,24 +1,20 @@
 import 'dotenv/config';
-import express, { NextFunction, Request, Response } from 'express';
+import express, { Request, Response } from 'express';
+import { fileURLToPath } from 'url'
+import { join, dirname } from 'path'
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 import cors from 'cors';
-import multer from 'multer';
 import cookieParser from 'cookie-parser';
 import router from './routes/index.js';
 import { trueMusicDb } from './databases/db.js';
 
+
+export const UPLOADS_PATH = join(__dirname, 'uploads')
 const PORT = process.env.PORT || 5000;
 const app = express();
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads');
-  },
-  filename: (req, file, cb) => {
-    const fileExtension = file.originalname.split('.').pop();
-    cb(null, file.fieldname + '-' + Date.now() + '.' + fileExtension);
-  },
-});
-const upload = multer({ storage });
+
 
 app.use(express.json());
 app.use(cookieParser());
@@ -28,16 +24,9 @@ app.use(
     origin: true,
   }),
 );
-app.use('/uploads', express.static('uploads'));
+app.use(UPLOADS_PATH, express.static(UPLOADS_PATH));
 app.use('/', router);
-
-app.post('/upload', upload.single('trackFiles'), (req, res) => {
-  res.json({
-    url: `/uploads/${req.file?.filename}`,
-  });
-});
-
-app.use((error: any, req: Request, res: Response, next: NextFunction) => {
+app.use((error: any, req: Request, res: Response) => {
   res.status(error.status || 500);
   res.json({
     status: error.status,
