@@ -38,7 +38,7 @@ app.use((error: any, req: Request, res: Response) => {
 const start = async () => {
   try {
     await trueMusicDb.authenticate();
-    await trueMusicDb.sync();
+    await trueMusicDb.sync({alter: true});
     app.listen(PORT, () => console.log(`Server started on port ${PORT} and db connected`));
   } catch (e) {
     console.log(e);
