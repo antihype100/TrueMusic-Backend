@@ -64,11 +64,11 @@ export class User extends Model<UserAttributes, UserCreationAttributes> {
   @Column
   role: string;
 
-  @Unique
+
   @Column
   userName: string;
 
-  @Unique
+
   @Column
   email: string;
 
@@ -101,6 +101,9 @@ export class User extends Model<UserAttributes, UserCreationAttributes> {
 
   @BelongsToMany(() => Track, () => UserPlaylist)
   tracksPlaylist: Track[];
+
+  @HasMany(() => Album)
+  releasedAlbums: Album[]
 }
 
 @Table({ modelName: 'albums' })
@@ -114,6 +117,11 @@ export class Album extends Model<AlbumAttributes, AlbumCreationAttributes> {
   @Column
   albumName: string;
 
+  @ForeignKey(() => User)
+  @Column
+  authorId: number
+
+
   @Column
   descriptionAlbum: string;
 
@@ -123,7 +131,7 @@ export class Album extends Model<AlbumAttributes, AlbumCreationAttributes> {
   @Column
   formatRelease: string;
 
-  @Unique
+
   @Column
   coverPath: string;
 
@@ -135,6 +143,8 @@ export class Album extends Model<AlbumAttributes, AlbumCreationAttributes> {
 
   @BelongsToMany(() => User, () => UserLikedAlbum)
   usersLiked: User[];
+
+
 }
 
 @Table({ modelName: 'tracks' })
@@ -157,7 +167,7 @@ export class Track extends Model<TrackAttributes, TrackCreationAttributes> {
   @Column
   trackText: string;
 
-  @Unique
+
   @Column
   trackPath: string;
 

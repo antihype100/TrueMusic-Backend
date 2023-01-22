@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 
 import { releaseService } from '../service/releaseService.js';
+import { afterEach } from 'node:test';
 
 
 export class ReleaseController {
@@ -11,17 +12,34 @@ export class ReleaseController {
                 authorName,
                 trackName,
                 trackProduction,
-                tackText,
+                trackText,
                 trackDescription,
                 albumName,
                 descriptionAlbum,
                 genreAlbum,
                 formatReleaseAlbum,
             } = req.body
-            console.log(authorName);
+            const tracks = []
             const album = await releaseService.createAlbum(albumName, authorName, descriptionAlbum, genreAlbum, formatReleaseAlbum)
-            console.log(album);
-            return res.json({status: 200});
+            if (Array.isArray(trackName)) {
+                for (const track of trackName) {
+                    const idx = trackName.indexOf(track)
+                    let trackInfo = await releaseService.addTrackToAlbum(
+                        album,
+                        albumName,
+                        track,
+                        trackDescription[idx],
+                        trackText[idx],
+                        authorName,
+                        trackProduction[idx],
+                    )
+                    tracks.push(trackInfo.toJSON())
+                }
+            } else {
+                let trackInfo = await releaseService.addTrackToAlbum(album, albumName, trackName, trackDescription, trackText, authorName, trackProduction)
+                tracks.push(trackInfo.toJSON())
+            }
+            return res.json({album: album.toJSON(), tracks: tracks});
         } catch (e) {
             next(e);
         }
@@ -30,8 +48,7 @@ export class ReleaseController {
 
     async uploadCover(req: Request, res: Response, next: NextFunction) {
         try {
-            console.log(req.body);
-            return res.json({status: 200});
+            return res.json({coverUpload: true});
         } catch (e) {
             next(e);
         }
