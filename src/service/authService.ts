@@ -50,7 +50,7 @@ class AuthService {
     }
     const { email, userName, role } = userData;
     const tokens = tokenService.generateToken({ email, userName, role });
-    return { ...tokens, user: { email, userName }, isLogin: true };
+    return { ...tokens, user: { email, userName, role }, isLogin: true };
   }
 }
 
