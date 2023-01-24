@@ -11,6 +11,7 @@ import {
   BelongsToMany,
 } from 'sequelize-typescript';
 import { Optional } from 'sequelize';
+import { Col } from 'sequelize/lib/utils';
 
 // Interfaces
 
@@ -167,9 +168,11 @@ export class Track extends Model<TrackAttributes, TrackCreationAttributes> {
   @Column
   trackText: string;
 
-
   @Column
   trackPath: string;
+
+  @Column
+  duration: number
 
   @ForeignKey(() => Album)
   @Column
