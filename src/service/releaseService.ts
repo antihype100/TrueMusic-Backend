@@ -33,10 +33,10 @@ class ReleaseService {
             descriptionTrack: trackDescription,
             trackText: trackText,
             production: trackProduction,
-            trackPath: trackPath
-        })
-        album?.$add('tracks', [track.id])
-        return track
+            trackPath: trackPath,
+        });
+        album?.$add('tracks', [track.id]);
+        return track;
     }
 }
 

@@ -11,7 +11,6 @@ import {
   BelongsToMany,
 } from 'sequelize-typescript';
 import { Optional } from 'sequelize';
-import { Col } from 'sequelize/lib/utils';
 
 // Interfaces
 
@@ -105,6 +104,7 @@ export class User extends Model<UserAttributes, UserCreationAttributes> {
 
   @HasMany(() => Album)
   releasedAlbums: Album[]
+
 }
 
 @Table({ modelName: 'albums' })
@@ -121,7 +121,6 @@ export class Album extends Model<AlbumAttributes, AlbumCreationAttributes> {
   @ForeignKey(() => User)
   @Column
   authorId: number
-
 
   @Column
   descriptionAlbum: string;
@@ -180,6 +179,7 @@ export class Track extends Model<TrackAttributes, TrackCreationAttributes> {
 
   @BelongsTo(() => Album)
   album: Album;
+
 
   @BelongsToMany(() => User, () => UserLikedTrack)
   usersLiked: User[];
