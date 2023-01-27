@@ -4,12 +4,13 @@ interface IUserDto {
     email: string;
     userName: string;
     role: string;
+    id: number
 }
 
 export class TokenService {
     generateToken = (userDto: IUserDto) => {
-        const accessToken = jwt.sign(userDto, process.env.JWT_ACCESS_SECRET!, { expiresIn: '15s' });
-        const refreshToken = jwt.sign(userDto, process.env.JWT_REFRESH_SECRET!, { expiresIn: '1h' });
+        const accessToken = jwt.sign(userDto, process.env.JWT_ACCESS_SECRET!, { expiresIn: '1h' });
+        const refreshToken = jwt.sign(userDto, process.env.JWT_REFRESH_SECRET!, { expiresIn: '10h' });
 
         return {
             accessToken,
@@ -19,8 +20,10 @@ export class TokenService {
 
     validateAccessToken = (token: string) => {
         try {
-            jwt.verify(token, process.env.JWT_ACCESS_SECRET!);
+            const userData = jwt.verify(token, process.env.JWT_ACCESS_SECRET!);
+            return userData as IUserDto
         } catch (e) {
+            console.log(e)
             return null;
         }
     };
@@ -28,7 +31,6 @@ export class TokenService {
     validateRefreshToken = (token: string) => {
         try {
             const userData = jwt.verify(token, process.env.JWT_REFRESH_SECRET!);
-            console.log(userData)
             return userData as IUserDto;
         } catch (e) {
             return null;

@@ -9,13 +9,38 @@ export class TrackController {
 
     async getTracks(req: Request, res: Response, next: NextFunction) {
         try {
-            console.log(req.headers)
-            if (req.headers.authorization) {
-                const user = tokenService.validateAccessToken(req.headers.authorization)
-                console.log(user)
+            const accessToken = req.headers?.authorization?.split(' ')[1]
+            let tracks: any
+            if (accessToken) {
+                const user = tokenService.validateAccessToken(accessToken)
+                if (user) {
+                    tracks = await trackService.getTracks(user.id)
+                }
+            } else {
+                tracks = await trackService.getTracks()
             }
-            const tracks = await trackService.getTracks()
-            res.json(tracks)
+
+            return res.json(tracks)
+        } catch (e: any) {
+            next(e)
+        }
+    }
+
+    async getTrack(req: Request, res: Response, next: NextFunction) {
+        try {
+            const {trackId} = req.params
+            const accessToken = req.headers?.authorization?.split(' ')[1]
+            let trackDto: any
+            if (accessToken) {
+                const user = tokenService.validateAccessToken(accessToken)
+                if (user) {
+                    trackDto = await trackService.getTrack(Number(trackId), user.id)
+                }
+            } else {
+                trackDto = await trackService.getTrack(Number(trackId))
+            }
+            res.json(trackDto)
+
         } catch (e: any) {
             next(e)
         }
@@ -52,9 +77,15 @@ export class TrackController {
 
     async likeTrack(req: Request, res: Response, next: NextFunction) {
         try {
-            const {userId, trackId} = req.body
-            console.log(req.body)
-            await trackService.likeTrack(trackId, userId)
+            const {trackId} = req.body
+            if (req.headers.authorization) {
+                const accessToken = req.headers.authorization.split(' ')[1]
+                const user = tokenService.validateAccessToken(accessToken)
+                if (user) {
+                    const action = await trackService.likeTrack(trackId, user.id)
+                    return res.json({action})
+                }
+            }
         } catch (e: any) {
             next(e)
         }
