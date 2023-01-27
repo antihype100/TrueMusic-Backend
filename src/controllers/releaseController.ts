@@ -1,7 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-
 import { releaseService } from '../service/releaseService.js';
-import { afterEach } from 'node:test';
 
 
 export class ReleaseController {
@@ -14,13 +12,15 @@ export class ReleaseController {
                 trackProduction,
                 trackText,
                 trackDescription,
+                trackDuration,
                 albumName,
-                descriptionAlbum,
-                genreAlbum,
-                formatReleaseAlbum,
+                albumDescription,
+                albumGenre,
+                albumFormatRelease,
             } = req.body
             const tracks = []
-            const album = await releaseService.createAlbum(albumName, authorName, descriptionAlbum, genreAlbum, formatReleaseAlbum)
+            console.log(typeof trackDuration)
+            const album = await releaseService.createAlbum(albumName, authorName, albumDescription, albumGenre, albumFormatRelease)
             if (Array.isArray(trackName)) {
                 for (const track of trackName) {
                     const idx = trackName.indexOf(track)
@@ -32,11 +32,12 @@ export class ReleaseController {
                         trackText[idx],
                         authorName,
                         trackProduction[idx],
+                        trackDuration[idx]
                     )
                     tracks.push(trackInfo.toJSON())
                 }
             } else {
-                let trackInfo = await releaseService.addTrackToAlbum(album, albumName, trackName, trackDescription, trackText, authorName, trackProduction)
+                let trackInfo = await releaseService.addTrackToAlbum(album, albumName, trackName, trackDescription, trackText, trackProduction, trackDuration, authorName)
                 tracks.push(trackInfo.toJSON())
             }
             return res.json({album: album.toJSON(), tracks: tracks});
@@ -53,11 +54,5 @@ export class ReleaseController {
             next(e);
         }
 
-    }
-
-    async getAll() {
-    }
-
-    async getOne() {
     }
 }

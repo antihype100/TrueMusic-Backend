@@ -1,24 +1,31 @@
-import { Track } from '../models/models.js';
+import {Track} from '../models/models.js';
 
-interface IUserDto {
-    email: string;
-    userName: string;
-    role: string;
-}
+
 
 export class TrackService {
     async getTracks() {
-        const tracks = await Track.findAll()
+        const tracks = await Track.findAll({include: [{all: true}]})
         const tracksDto: any[] = []
         tracks.forEach(track => {
             track = track.toJSON()
             const authorName = track.trackPath.split('/')[1]
-            const trackDto = {...track, authorName}
+            const trackDto = {...track, authorName, usersLiked: track.usersLiked.length}
             tracksDto.push(trackDto)
 
         })
         return tracksDto
     };
+
+    async likeTrack(trackId: number, userId: number) {
+
+        const track = await Track.findOne({
+            where: {
+                id: trackId
+            }
+        })
+
+        track?.$add('usersLiked', [userId])
+    }
 
 
 }

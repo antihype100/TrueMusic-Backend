@@ -1,19 +1,19 @@
 import { Album, Track, User } from '../models/models.js';
 
 class ReleaseService {
-    async createAlbum(albumName: string, authorName: string, descriptionAlbum: string, genre: string, formatRelease: string) {
+    async createAlbum(albumName: string, authorName: string, albumDescription: string, albumGenre: string, albumFormatRelease: string) {
         const author = await User.findOne({
             where: {
                 userName: authorName,
             },
         });
-        const coverPath = `/${authorName}/${albumName}`;
+        const albumCoverPath = `/${authorName}/${albumName}`;
         const album = await Album.create({
             albumName: albumName,
-            descriptionAlbum: descriptionAlbum,
-            genre: genre,
-            formatRelease: formatRelease,
-            coverPath: coverPath,
+            albumDescription: albumDescription,
+            albumGenre: albumGenre,
+            albumFormatRelease: albumFormatRelease,
+            albumCoverPath: albumCoverPath,
         });
         author?.$add('releasedAlbums', [album.id]);
         return album;
@@ -25,15 +25,17 @@ class ReleaseService {
         trackName: string,
         trackDescription: string,
         trackText: string,
-        authorName: string,
-        trackProduction: string) {
+        trackProduction: string,
+        trackDuration: string,
+        authorName: string) {
         const trackPath = `/${authorName}/${albumName}/${trackName}.mp3`;
         const track = await Track.create({
             trackName: trackName,
-            descriptionTrack: trackDescription,
+            trackDescription: trackDescription,
             trackText: trackText,
-            production: trackProduction,
+            trackProduction: trackProduction,
             trackPath: trackPath,
+            trackDuration: Math.floor(Number(trackDuration))
         });
         album?.$add('tracks', [track.id]);
         return track;

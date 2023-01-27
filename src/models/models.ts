@@ -1,273 +1,280 @@
 import {
-  Table,
-  Column,
-  Model,
-  AutoIncrement,
-  PrimaryKey,
-  Unique,
-  HasMany,
-  BelongsTo,
-  ForeignKey,
-  BelongsToMany,
+    Table,
+    Column,
+    Model,
+    AutoIncrement,
+    PrimaryKey,
+    Unique,
+    HasMany,
+    BelongsTo,
+    ForeignKey,
+    BelongsToMany,
 } from 'sequelize-typescript';
-import { Optional } from 'sequelize';
+import {Optional} from 'sequelize';
 
 // Interfaces
 
 export interface UserAttributes {
-  id: number;
-  role: string;
-  userName: string;
-  email: string;
-  password: string;
-  // token: string;
-  // activateLink: string;
+    id: number;
+    role: string;
+    userName: string;
+    email: string;
+    password: string;
+    // token: string;
+    // activateLink: string;
 }
-interface UserCreationAttributes extends Optional<UserAttributes, 'id'> {}
+
+interface UserCreationAttributes extends Optional<UserAttributes, 'id'> {
+}
 
 export interface TrackAttributes {
-  id: number;
-  trackName: string;
-  descriptionTrack: string;
-  production: string;
-  trackText: string;
-  trackPath: string;
+    id: number;
+    trackName: string;
+    trackDescription: string;
+    trackProduction: string;
+    trackText: string;
+    trackPath: string;
+    trackDuration: number
 }
-interface TrackCreationAttributes extends Optional<TrackAttributes, 'id'> {}
+
+interface TrackCreationAttributes extends Optional<TrackAttributes, 'id'> {
+}
 
 export interface AlbumAttributes {
-  id: number;
-  albumName: string;
-  descriptionAlbum: string;
-  genre: string;
-  formatRelease: string;
-  coverPath: string;
+    id: number;
+    albumName: string;
+    albumDescription: string;
+    albumGenre: string;
+    albumFormatRelease: string;
+    albumCoverPath: string;
 }
-interface AlbumCreationAttributes extends Optional<AlbumAttributes, 'id'> {}
+
+interface AlbumCreationAttributes extends Optional<AlbumAttributes, 'id'> {
+}
 
 export interface UserBackgroundAttributes {
-  id: number;
-  backgroundPath: string;
+    id: number;
+    backgroundPath: string;
 }
-interface UserBackgroundCreationAttributes extends Optional<UserBackgroundAttributes, 'id'> {}
+
+interface UserBackgroundCreationAttributes extends Optional<UserBackgroundAttributes, 'id'> {
+}
 
 // Models
 
-@Table({ modelName: 'users' })
+@Table({modelName: 'users'})
 export class User extends Model<UserAttributes, UserCreationAttributes> {
-  @AutoIncrement
-  @PrimaryKey
-  @Unique
-  @Column
-  id: number;
+    @AutoIncrement
+    @PrimaryKey
+    @Unique
+    @Column
+    id: number;
 
-  @Column
-  role: string;
-
-
-  @Column
-  userName: string;
+    @Column
+    role: string;
 
 
-  @Column
-  email: string;
+    @Column
+    userName: string;
 
-  @Column
-  password: string;
 
-  // @Column
-  // token: string;
-  //
-  // @Column
-  // activateLink: string;
+    @Column
+    email: string;
 
-  @BelongsToMany(() => Track, () => UserLikedTrack)
-  likedTracks: Track[];
+    @Column
+    password: string;
 
-  @BelongsToMany(() => Album, () => UserLikedAlbum)
-  likedAlbums: Album[];
+    // @Column
+    // token: string;
+    //
+    // @Column
+    // activateLink: string;
 
-  @BelongsToMany(() => Track, () => UserAuditionTrack)
-  auditionsTracks: Track[];
+    @BelongsToMany(() => Track, () => UserLikedTrack)
+    likedTracks: Array<Track & {UserLikedTrack: UserLikedTrack}>
 
-  @BelongsToMany(() => Album, () => UserAlbums)
-  addAlbums: Album[];
+    @BelongsToMany(() => Album, () => UserLikedAlbum)
+    likedAlbums: Album[];
 
-  @BelongsToMany(() => User, () => UserSubscriptions, 'subscribedUserId')
-  subscribedUsers: User[];
+    @BelongsToMany(() => Track, () => UserAuditionTrack)
+    auditionsTracks: Track[];
 
-  @BelongsToMany(() => User, () => UserSubscriptions, 'toUserId')
-  toUsers: User[];
+    @BelongsToMany(() => Album, () => UserAlbums)
+    addAlbums: Album[];
 
-  @BelongsToMany(() => Track, () => UserPlaylist)
-  tracksPlaylist: Track[];
+    @BelongsToMany(() => User, () => UserSubscriptions, 'subscribedUserId')
+    subscribedUsers: User[];
 
-  @HasMany(() => Album)
-  releasedAlbums: Album[]
+    @BelongsToMany(() => User, () => UserSubscriptions, 'toUserId')
+    toUsers: User[];
+
+    @BelongsToMany(() => Track, () => UserPlaylist)
+    tracksPlaylist: Track[];
+
+    @HasMany(() => Album)
+    releasedAlbums: Album[]
 
 }
 
-@Table({ modelName: 'albums' })
+@Table({modelName: 'albums'})
 export class Album extends Model<AlbumAttributes, AlbumCreationAttributes> {
-  @AutoIncrement
-  @PrimaryKey
-  @Unique
-  @Column
-  id: number;
+    @AutoIncrement
+    @PrimaryKey
+    @Unique
+    @Column
+    id: number;
 
-  @Column
-  albumName: string;
+    @Column
+    albumName: string;
 
-  @ForeignKey(() => User)
-  @Column
-  authorId: number
+    @ForeignKey(() => User)
+    @Column
+    authorId: number
 
-  @Column
-  descriptionAlbum: string;
+    @Column
+    albumDescription: string;
+    @Column
+    albumGenre: string;
 
-  @Column
-  genre: string;
+    @Column
+    albumFormatRelease: string;
 
-  @Column
-  formatRelease: string;
+    @Column
+    albumCoverPath: string;
 
+    @HasMany(() => Track)
+    tracks: Track[];
 
-  @Column
-  coverPath: string;
+    @BelongsToMany(() => User, () => UserAlbums)
+    addUsers: User[];
 
-  @HasMany(() => Track)
-  tracks: Track[];
-
-  @BelongsToMany(() => User, () => UserAlbums)
-  addUsers: User[];
-
-  @BelongsToMany(() => User, () => UserLikedAlbum)
-  usersLiked: User[];
+    @BelongsToMany(() => User, () => UserLikedAlbum)
+    usersLiked: User[];
 
 
 }
 
-@Table({ modelName: 'tracks' })
+@Table({modelName: 'tracks'})
 export class Track extends Model<TrackAttributes, TrackCreationAttributes> {
-  @AutoIncrement
-  @PrimaryKey
-  @Unique
-  @Column
-  id: number;
+    @AutoIncrement
+    @PrimaryKey
+    @Unique
+    @Column
+    id: number;
 
-  @Column
-  trackName: string;
+    @Column
+    trackName: string;
 
-  @Column
-  descriptionTrack: string;
+    @Column
+    trackDescription: string;
 
-  @Column
-  production: string;
+    @Column
+    trackProduction: string;
 
-  @Column
-  trackText: string;
+    @Column
+    trackText: string;
 
-  @Column
-  trackPath: string;
+    @Column
+    trackPath: string;
 
-  @Column
-  duration: number
+    @Column
+    trackDuration: number
 
-  @ForeignKey(() => Album)
-  @Column
-  albumId: number;
+    @ForeignKey(() => Album)
+    @Column
+    albumId: number;
 
-  @BelongsTo(() => Album)
-  album: Album;
+    @BelongsTo(() => Album)
+    album: Album;
 
 
-  @BelongsToMany(() => User, () => UserLikedTrack)
-  usersLiked: User[];
+    @BelongsToMany(() => User, () => UserLikedTrack)
+    usersLiked: Array<User & {UserLikedTrack: UserLikedTrack}>;
 
-  @BelongsToMany(() => User, () => UserAuditionTrack)
-  usersAuditions: User[];
+    @BelongsToMany(() => User, () => UserAuditionTrack)
+    usersAuditions: User[];
 
-  @BelongsToMany(() => User, () => UserPlaylist)
-  usersPlaylist: User[];
+    @BelongsToMany(() => User, () => UserPlaylist)
+    usersPlaylist: User[];
 }
 
-@Table({ modelName: 'user_background' })
+@Table({modelName: 'user_background'})
 export class UserBackground extends Model<UserBackgroundAttributes, UserBackgroundCreationAttributes> {
-  @AutoIncrement
-  @PrimaryKey
-  @Unique
-  @Column
-  id: number;
+    @AutoIncrement
+    @PrimaryKey
+    @Unique
+    @Column
+    id: number;
 
-  @Column
-  backgroundPath: string;
+    @Column
+    backgroundPath: string;
 }
 
-@Table({ modelName: 'user_liked_track' })
+@Table({modelName: 'user_liked_tracks'})
 export class UserLikedTrack extends Model {
-  @ForeignKey(() => User)
-  @Column
-  userId: number;
+    @ForeignKey(() => User)
+    @Column
+    userId: number;
 
-  @ForeignKey(() => Track)
-  @Column
-  trackId: number;
+    @ForeignKey(() => Track)
+    @Column
+    trackId: number;
 }
 
-@Table({ modelName: 'user_liked_album' })
+@Table({modelName: 'user_liked_album'})
 export class UserLikedAlbum extends Model {
-  @ForeignKey(() => User)
-  @Column
-  userId: number;
+    @ForeignKey(() => User)
+    @Column
+    userId: number;
 
-  @ForeignKey(() => Album)
-  @Column
-  albumId: number;
+    @ForeignKey(() => Album)
+    @Column
+    albumId: number;
 }
 
-@Table({ modelName: 'user_audition_track' })
+@Table({modelName: 'user_audition_track'})
 export class UserAuditionTrack extends Model {
-  @ForeignKey(() => User)
-  @Column
-  userId: number;
+    @ForeignKey(() => User)
+    @Column
+    userId: number;
 
-  @ForeignKey(() => Track)
-  @Column
-  trackId: number;
+    @ForeignKey(() => Track)
+    @Column
+    trackId: number;
 }
 
-@Table({ modelName: 'user_albums' })
+@Table({modelName: 'user_albums'})
 export class UserAlbums extends Model {
-  @ForeignKey(() => User)
-  @Column
-  userId: number;
+    @ForeignKey(() => User)
+    @Column
+    userId: number;
 
-  @ForeignKey(() => Album)
-  @Column
-  albumId: number;
+    @ForeignKey(() => Album)
+    @Column
+    albumId: number;
 }
 
-@Table({ modelName: 'user_subscriptions' })
+@Table({modelName: 'user_subscriptions'})
 export class UserSubscriptions extends Model {
-  @ForeignKey(() => User)
-  @Column
-  subscribedUserId: number;
+    @ForeignKey(() => User)
+    @Column
+    subscribedUserId: number;
 
-  @ForeignKey(() => User)
-  @Column
-  toUserId: number;
+    @ForeignKey(() => User)
+    @Column
+    toUserId: number;
 }
 
-@Table({ modelName: 'user_playlist' })
+@Table({modelName: 'user_playlist'})
 export class UserPlaylist extends Model {
-  @Column
-  playlistName: string;
+    @Column
+    playlistName: string;
 
-  @ForeignKey(() => User)
-  @Column
-  userId: number;
+    @ForeignKey(() => User)
+    @Column
+    userId: number;
 
-  @ForeignKey(() => Track)
-  @Column
-  trackId: number;
+    @ForeignKey(() => Track)
+    @Column
+    trackId: number;
 }
