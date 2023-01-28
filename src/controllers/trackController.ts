@@ -87,4 +87,24 @@ export class TrackController {
 
     }
 
+    async addAuditionTrack(req: Request, res: Response, next: NextFunction) {
+        try {
+            const {trackId} = req.body
+            console.log(trackId)
+            const accessToken = req.headers.authorization?.split(' ')[1]
+            const user = tokenService.validateAccessToken(accessToken)
+            if (user) {
+                console.log(user)
+                const action = await trackService.addAudition(trackId, user.id)
+                res.json({action})
+            } else {
+                res.json({try: false})
+            }
+
+        } catch (e: any) {
+            next(e)
+        }
+
+    }
+
 }

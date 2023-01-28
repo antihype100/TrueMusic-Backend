@@ -1,4 +1,4 @@
-import {Track, UserLikedTrack} from '../models/models.js';
+import {Track, UserAuditionTrack, UserLikedTrack} from '../models/models.js';
 import {Op} from "sequelize";
 
 
@@ -9,14 +9,17 @@ export class TrackService  {
         tracks.forEach(track => {
             const trackJSON = track.toJSON()
             const authorName = trackJSON.trackPath.split('/')[1]
-            let users = track.usersLiked.filter(el => el.toJSON().id === userId)
-            let isLiked = users.length !== 0;
+            let usersLiked = track.usersLiked.filter(el => el.toJSON().id === userId)
+            let usersAudition = track.usersAuditions.filter(el => el.toJSON().id === userId)
+            let isLiked = usersLiked.length !== 0;
+            let isAudition = usersAudition.length !== 0;
             const trackDto = {
                 ...trackJSON,
                 authorName,
                 usersLiked: track.usersLiked.length,
                 usersAuditions: track.usersAuditions.length,
-                isLiked: isLiked
+                isLiked: isLiked,
+                isAudition: isAudition
             }
             tracksDto.push(trackDto)
         })
@@ -65,6 +68,26 @@ export class TrackService  {
         } else {
             track?.$add('usersLiked', [userId])
             return 'like'
+        }
+    }
+
+    async addAudition(trackId: number, userId: number) {
+        console.log(10)
+        const track = await Track.findOne({
+            where: {
+                id: trackId
+            }
+        })
+        const isAuditions = await UserAuditionTrack.findOne({
+            where: {
+                [Op.and]: [{userId: userId, trackId: trackId}]
+            }
+        })
+        if (isAuditions) {
+            return 'Already listened'
+        } else {
+            track?.$add('usersAuditions', [userId])
+            return 'Audition added'
         }
     }
 
