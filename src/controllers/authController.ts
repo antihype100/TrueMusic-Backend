@@ -34,6 +34,7 @@ export class AuthController {
 
     async refresh(req: Request, res: Response, next: NextFunction) {
         try {
+
             const { refreshToken } = req.cookies;
             const userData = await authService.refresh(refreshToken);
             res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 30, httpOnly: true });

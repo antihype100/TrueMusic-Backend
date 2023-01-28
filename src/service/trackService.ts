@@ -11,11 +11,15 @@ export class TrackService  {
             const authorName = trackJSON.trackPath.split('/')[1]
             let users = track.usersLiked.filter(el => el.toJSON().id === userId)
             let isLiked = users.length !== 0;
-            const trackDto = {...trackJSON, authorName, usersLiked: track.usersLiked.length, isLiked: isLiked}
+            const trackDto = {
+                ...trackJSON,
+                authorName,
+                usersLiked: track.usersLiked.length,
+                usersAuditions: track.usersAuditions.length,
+                isLiked: isLiked
+            }
             tracksDto.push(trackDto)
-
         })
-        console.log(tracksDto)
         return tracksDto
     };
 

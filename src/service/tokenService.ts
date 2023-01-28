@@ -9,8 +9,8 @@ interface IUserDto {
 
 export class TokenService {
     generateToken = (userDto: IUserDto) => {
-        const accessToken = jwt.sign(userDto, process.env.JWT_ACCESS_SECRET!, { expiresIn: '1h' });
-        const refreshToken = jwt.sign(userDto, process.env.JWT_REFRESH_SECRET!, { expiresIn: '10h' });
+        const accessToken = jwt.sign(userDto, process.env.JWT_ACCESS_SECRET!, {expiresIn: '1h'});
+        const refreshToken = jwt.sign(userDto, process.env.JWT_REFRESH_SECRET!, {expiresIn: '10h'});
 
         return {
             accessToken,
@@ -18,12 +18,14 @@ export class TokenService {
         };
     };
 
-    validateAccessToken = (token: string) => {
+    validateAccessToken = (token: string | undefined) => {
         try {
-            const userData = jwt.verify(token, process.env.JWT_ACCESS_SECRET!);
-            return userData as IUserDto
+            if (token) {
+                const userData = jwt.verify(token, process.env.JWT_ACCESS_SECRET!);
+                return userData as IUserDto
+            }
+            return null
         } catch (e) {
-            console.log(e)
             return null;
         }
     };

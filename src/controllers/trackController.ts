@@ -9,18 +9,16 @@ export class TrackController {
 
     async getTracks(req: Request, res: Response, next: NextFunction) {
         try {
-            const accessToken = req.headers?.authorization?.split(' ')[1]
-            let tracks: any
-            if (accessToken) {
-                const user = tokenService.validateAccessToken(accessToken)
-                if (user) {
-                    tracks = await trackService.getTracks(user.id)
-                }
+            let trackDto: any
+            const accessToken = req.headers.authorization?.split(' ')[1]
+            const user = tokenService.validateAccessToken(accessToken)
+            if (user) {
+                console.log('user', user)
+                trackDto = await trackService.getTracks(user.id)
             } else {
-                tracks = await trackService.getTracks()
+                trackDto = await trackService.getTracks()
             }
-
-            return res.json(tracks)
+            res.json(trackDto)
         } catch (e: any) {
             next(e)
         }
@@ -29,13 +27,11 @@ export class TrackController {
     async getTrack(req: Request, res: Response, next: NextFunction) {
         try {
             const {trackId} = req.params
-            const accessToken = req.headers?.authorization?.split(' ')[1]
             let trackDto: any
-            if (accessToken) {
-                const user = tokenService.validateAccessToken(accessToken)
-                if (user) {
-                    trackDto = await trackService.getTrack(Number(trackId), user.id)
-                }
+            const accessToken = req.headers.authorization?.split(' ')[1]
+            const user = tokenService.validateAccessToken(accessToken)
+            if (user) {
+                trackDto = await trackService.getTrack(Number(trackId), user.id)
             } else {
                 trackDto = await trackService.getTrack(Number(trackId))
             }
@@ -53,6 +49,7 @@ export class TrackController {
             res.setHeader('Content-Type', 'audio/mpeg');
             stream.pipe(res)
         } catch (e: any) {
+            console.log(10)
             next(e);
         }
     }
@@ -78,13 +75,11 @@ export class TrackController {
     async likeTrack(req: Request, res: Response, next: NextFunction) {
         try {
             const {trackId} = req.body
-            if (req.headers.authorization) {
-                const accessToken = req.headers.authorization.split(' ')[1]
-                const user = tokenService.validateAccessToken(accessToken)
-                if (user) {
-                    const action = await trackService.likeTrack(trackId, user.id)
-                    return res.json({action})
-                }
+            const accessToken = req.headers.authorization?.split(' ')[1]
+            const user = tokenService.validateAccessToken(accessToken)
+            if (user) {
+                const action = await trackService.likeTrack(trackId, user.id)
+                res.json({action})
             }
         } catch (e: any) {
             next(e)
