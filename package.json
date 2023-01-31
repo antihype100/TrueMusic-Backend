@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "npx nodemon",
     "start": "rimraf ./dist && tsc && node ./dist/index.js",
-    "pm2": "tsc && pm2 start pm2.config.js",
+    "pm2": "rimraf ./dist && tsc && pm2 start ./dist/index.js",
     "format": "prettier --write \"**/*.ts\"",
     "format:four": "prettier --tab-width 4 --write \"**/*.ts\"",
     "lint": "eslint src/**/*.ts",
