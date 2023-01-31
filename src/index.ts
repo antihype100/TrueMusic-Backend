@@ -19,12 +19,8 @@ const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(
-    cors({
-        credentials: true,
-        origin: true,
-    }),
-);
+app.use(cors({ origin: true }))
+app.options('*', cors())
 app.use(UPLOADS_PATH, express.static(UPLOADS_PATH));
 app.use('/', router);
 app.use((error: any, req: Request, res: Response) => {
