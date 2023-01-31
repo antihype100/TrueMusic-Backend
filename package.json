@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "npx nodemon",
-    "start": "npm run build && node dist/index.js",
-    "build": "rimraf ./dist && tsc",
+    "start": "rimraf ./dist && tsc && node ./dist/index.js",
+    "pm2": "tsc && pm2 start pm2.config.js",
     "format": "prettier --write \"**/*.ts\"",
     "format:four": "prettier --tab-width 4 --write \"**/*.ts\"",
     "lint": "eslint src/**/*.ts",
