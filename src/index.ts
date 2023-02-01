@@ -9,7 +9,6 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import router from './routes/index.js';
 import {trueMusicDb} from './databases/db.js';
-import {runMigrations} from "./migrations/migration.js";
 
 
 export const UPLOADS_PATH = join(__dirname, 'uploads')
@@ -35,7 +34,6 @@ app.use((error: any, req: Request, res: Response) => {
 const start = async () => {
     try {
         await trueMusicDb.authenticate();
-        await runMigrations()
         await trueMusicDb.sync({alter: true});
         app.listen(PORT, () => console.log(`Server started on port ${PORT} and db connected`));
     } catch (e) {
