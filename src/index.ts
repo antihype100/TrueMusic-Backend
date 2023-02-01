@@ -18,8 +18,9 @@ const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({ origin: true }))
-app.options('*', cors())
+app.use(cors({
+    origin: 'http://localhost:5173'
+}));
 app.use(UPLOADS_PATH, express.static(UPLOADS_PATH));
 app.use('/', router);
 app.use((error: any, req: Request, res: Response) => {
