@@ -19,7 +19,8 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-    origin: 'http://localhost:5173'
+    origin: ['http://localhost:5173', 'https://truemusic-test.ru'],
+    credentials: true
 }));
 app.use(UPLOADS_PATH, express.static(UPLOADS_PATH));
 app.use('/', router);
