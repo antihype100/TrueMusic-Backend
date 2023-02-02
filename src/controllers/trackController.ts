@@ -45,9 +45,11 @@ export class TrackController {
     async listenTrack(req: Request, res: Response, next: NextFunction) {
         try {
             const {authorName, albumName, trackName} = req.params
-            const stream = fs.createReadStream(join(UPLOADS_PATH, authorName, albumName, 'tracks', trackName))
-            res.setHeader('Content-Type', 'audio/mpeg');
-            stream.pipe(res)
+            if (fs.existsSync(join(UPLOADS_PATH, authorName, albumName, 'tracks', trackName))) {
+                const stream = fs.createReadStream(join(UPLOADS_PATH, authorName, albumName, 'tracks', trackName))
+                res.setHeader('Content-Type', 'audio/mpeg');
+                stream.pipe(res)
+            }
         } catch (e: any) {
             console.log(10)
             next(e);
