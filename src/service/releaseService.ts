@@ -29,6 +29,7 @@ class ReleaseService {
         trackDuration: string,
         authorName: string) {
         const trackPath = `/${authorName}/${albumName}/${trackName}.mp3`;
+        console.log(Math.floor(Number(trackDuration)))
         const track = await Track.create({
             trackName: trackName,
             trackDescription: trackDescription,

@@ -19,7 +19,7 @@ export class ReleaseController {
                 albumFormatRelease,
             } = req.body
             const tracks = []
-            console.log(typeof trackDuration)
+            console.log(req.body)
             const album = await releaseService.createAlbum(albumName, authorName, albumDescription, albumGenre, albumFormatRelease)
             if (Array.isArray(trackName)) {
                 for (const track of trackName) {
@@ -27,12 +27,12 @@ export class ReleaseController {
                     let trackInfo = await releaseService.addTrackToAlbum(
                         album,
                         albumName,
-                        track,
+                        trackName[idx],
                         trackDescription[idx],
                         trackText[idx],
-                        authorName,
                         trackProduction[idx],
-                        trackDuration[idx]
+                        trackDuration[idx],
+                        authorName
                     )
                     tracks.push(trackInfo.toJSON())
                 }
