@@ -8,14 +8,12 @@ export class TrackService  {
         const tracksDto: any[] = []
         tracks.forEach(track => {
             const trackJSON = track.toJSON()
-            const authorName = trackJSON.trackPath.split('/')[1]
             let usersLiked = track.usersLiked.filter(el => el.toJSON().id === userId)
             let usersAudition = track.usersAuditions.filter(el => el.toJSON().id === userId)
             let isLiked = usersLiked.length !== 0;
             let isAudition = usersAudition.length !== 0;
             const trackDto = {
                 ...trackJSON,
-                authorName,
                 usersLiked: track.usersLiked.length,
                 usersAuditions: track.usersAuditions.length,
                 isLiked: isLiked,
@@ -26,23 +24,50 @@ export class TrackService  {
         return tracksDto
     };
 
-    async getTrack(trackId: number, userId?: number) {
+    async getLikedTracks(userId?: number) {
+        const tracks = await Track.findAll({include: [{all: true}]})
+        const tracksDto: any[] = []
+        tracks.forEach(track => {
+            const trackJSON = track.toJSON()
+            let usersLiked = track.usersLiked.filter(el => el.toJSON().id === userId)
+            let usersAudition = track.usersAuditions.filter(el => el.toJSON().id === userId)
+            let isLiked = usersLiked.length !== 0;
+            let isAudition = usersAudition.length !== 0;
+            const trackDto = {
+                ...trackJSON,
+                usersLiked: track.usersLiked.length,
+                usersAuditions: track.usersAuditions.length,
+                isLiked: isLiked,
+                isAudition: isAudition
+            }
+            if (isLiked) {
+                tracksDto.push(trackDto)
+            }
+        })
+        return tracksDto
+    };
+
+    async getTrack(authorName: string, trackName: string, userId = -1) {
         const track = await Track.findOne({
             where: {
-                id: trackId
+                trackName: trackName,
+                authorName: authorName
             },
             include: [{all: true}]
         })
         let trackDto: any
         if (track) {
             const trackJSON = track.toJSON()
-            const authorName = track.trackPath.split('/')[1]
             const isLiked = track.usersLiked.filter(el => el.toJSON().id === userId)
-            if (isLiked.length === 0) {
-                trackDto = {...trackJSON, authorName, usersLiked: track.usersLiked.length, isLiked: false}
-            } else {
-                trackDto = {...trackJSON, authorName, usersLiked: track.usersLiked.length, isLiked: true}
-            }
+            const isAudition = track.usersAuditions.filter(el => el.toJSON().id === userId)
+            console.log(isLiked)
+                trackDto = {
+                    ...trackJSON,
+                    usersLiked: track.usersLiked.length,
+                    usersAuditions: track.usersAuditions.length,
+                    isLiked: Boolean(isLiked.length),
+                    isAudition: Boolean(isAudition.length)
+                }
         }
         return trackDto
     };

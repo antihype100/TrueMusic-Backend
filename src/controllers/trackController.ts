@@ -6,14 +6,34 @@ import {trackService} from '../service/trackService.js';
 import {tokenService} from "../service/tokenService.js";
 
 export class TrackController {
+    async getTrack(req: Request, res: Response, next: NextFunction) {
+        try {
+            const {authorName, trackName} = req.params
+            console.log(req.params)
+            let trackDto: any
+            const accessToken = req.headers.authorization?.split(' ')[1]
+            const user = tokenService.validateAccessToken(accessToken)
+            console.log(user)
+            if (user) {
+                trackDto = await trackService.getTrack(authorName, trackName, user.id)
+            } else {
+                trackDto = await trackService.getTrack(authorName, trackName)
+            }
+            res.json(trackDto)
+
+        } catch (e: any) {
+            next(e)
+        }
+    }
+
 
     async getTracks(req: Request, res: Response, next: NextFunction) {
         try {
             let trackDto: any
             const accessToken = req.headers.authorization?.split(' ')[1]
             const user = tokenService.validateAccessToken(accessToken)
+            console.log(accessToken)
             if (user) {
-                console.log('user', user)
                 trackDto = await trackService.getTracks(user.id)
             } else {
                 trackDto = await trackService.getTracks()
@@ -24,23 +44,24 @@ export class TrackController {
         }
     }
 
-    async getTrack(req: Request, res: Response, next: NextFunction) {
+    async getLikedTracks(req: Request, res: Response, next: NextFunction) {
         try {
-            const {trackId} = req.params
             let trackDto: any
             const accessToken = req.headers.authorization?.split(' ')[1]
             const user = tokenService.validateAccessToken(accessToken)
+            console.log(accessToken)
             if (user) {
-                trackDto = await trackService.getTrack(Number(trackId), user.id)
-            } else {
-                trackDto = await trackService.getTrack(Number(trackId))
+                trackDto = await trackService.getLikedTracks(user.id)
             }
             res.json(trackDto)
-
         } catch (e: any) {
             next(e)
         }
     }
+
+
+
+
 
     async listenTrack(req: Request, res: Response, next: NextFunction) {
         try {
@@ -77,9 +98,13 @@ export class TrackController {
     async likeTrack(req: Request, res: Response, next: NextFunction) {
         try {
             const {trackId} = req.body
+
             const accessToken = req.headers.authorization?.split(' ')[1]
+            console.log(accessToken)
             const user = tokenService.validateAccessToken(accessToken)
+            console.log(user)
             if (user) {
+                console.log(trackId)
                 const action = await trackService.likeTrack(trackId, user.id)
                 res.json({action})
             }

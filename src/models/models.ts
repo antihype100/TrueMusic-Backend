@@ -35,6 +35,8 @@ export interface TrackAttributes {
     trackText: string;
     trackPath: string;
     trackDuration: number
+    authorName: string,
+    albumName: string
 }
 
 interface TrackCreationAttributes extends Optional<TrackAttributes, 'id'> {
@@ -47,6 +49,7 @@ export interface AlbumAttributes {
     albumGenre: string;
     albumFormatRelease: string;
     albumCoverPath: string;
+    authorName: string;
 }
 
 interface AlbumCreationAttributes extends Optional<AlbumAttributes, 'id'> {
@@ -141,6 +144,8 @@ export class Album extends Model<AlbumAttributes, AlbumCreationAttributes> {
 
     @Column
     albumCoverPath: string;
+    @Column
+    authorName: string;
 
     @HasMany(() => Track)
     tracks: Track[];
@@ -178,7 +183,11 @@ export class Track extends Model<TrackAttributes, TrackCreationAttributes> {
     trackPath: string;
 
     @Column
-    trackDuration: number
+    trackDuration: number;
+    @Column
+    authorName: string;
+    @Column
+    albumName: string
 
     @ForeignKey(() => Album)
     @Column

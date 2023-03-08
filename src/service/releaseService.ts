@@ -14,6 +14,7 @@ class ReleaseService {
             albumGenre: albumGenre,
             albumFormatRelease: albumFormatRelease,
             albumCoverPath: albumCoverPath,
+            authorName: authorName
         });
         author?.$add('releasedAlbums', [album.id]);
         return album;
@@ -29,14 +30,15 @@ class ReleaseService {
         trackDuration: string,
         authorName: string) {
         const trackPath = `/${authorName}/${albumName}/${trackName}.mp3`;
-        console.log(Math.floor(Number(trackDuration)))
         const track = await Track.create({
             trackName: trackName,
             trackDescription: trackDescription,
             trackText: trackText,
             trackProduction: trackProduction,
             trackPath: trackPath,
-            trackDuration: Math.floor(Number(trackDuration))
+            trackDuration: Math.floor(Number(trackDuration)),
+            albumName: albumName,
+            authorName: authorName
         });
         album?.$add('tracks', [track.id]);
         return track;

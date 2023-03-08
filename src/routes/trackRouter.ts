@@ -5,7 +5,8 @@ const trackController = new TrackController();
 const router = express.Router();
 
 router.get('/all', trackController.getTracks);
-router.get('/:trackId', trackController.getTrack);
+router.get('/favorites', trackController.getLikedTracks);
+router.get('/:authorName/:trackName', trackController.getTrack);
 router.get('/:authorName/:albumName/:trackName', trackController.listenTrack);
 router.get('/cover/:authorName/:albumName/:trackName', trackController.getCover);
 
